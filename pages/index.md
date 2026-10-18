@@ -10,13 +10,4 @@
 
 如有任何問題，歡迎透過 [CONTACT](/contact.html) 頁面上的方式聯繫我。
 
-# BLOG
-
-{% for i in collection_items_list.blog %}
-<article>
-<h2>{{i.title}}</h2>
-<div>
-<a class="more" href="{{i.url}}">Read More</a>
-</div>
-</article>
-{% endfor %}
+想看文章的話歡迎到 [BLOG](/blog.html) 逛逛。
