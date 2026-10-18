@@ -70,11 +70,17 @@ void render_pages()
 
     glob("pages/*", GLOB_TILDE, NULL, &glob_result);
 
+    std::string base_url = cpp_ssg_config_data["site"]["base_url"].get<std::string>();
+    std::string site_url = cpp_ssg_config_data["site"]["url"].get<std::string>();
+
     for (unsigned int i = 0; i < glob_result.gl_pathc; ++i)
     {
         std::string full_input_path = glob_result.gl_pathv[i];
         std::string file_name = full_input_path.substr(6, full_input_path.length() - 9);
         std::string full_output_path = file_name + ".html";
+        std::string rel_url = base_url + "/" + full_output_path;
+
+        cpp_ssg_config_data["page_url"] = site_url + rel_url;
 
         std::string html_with_full_data = render(read_file(full_input_path), cpp_ssg_config_data);
         html_with_full_data = parse_md(html_with_full_data);
@@ -85,7 +91,7 @@ void render_pages()
         std::string temp_full_file = render(temp_layout, cpp_ssg_config_data);
         save_html_file(temp_full_file, "site/" + full_output_path);
 
-        cpp_ssg_config_data["page_list"][i] = {{"title", file_name}, {"url", full_output_path}};
+        cpp_ssg_config_data["page_list"][i] = {{"title", file_name}, {"url", rel_url}};
     }
 }
 
@@ -95,6 +101,9 @@ void render_collections()
     json collections = cpp_ssg_config_data["collections"];
 
     glob_t glob_result;
+
+    std::string base_url = cpp_ssg_config_data["site"]["base_url"].get<std::string>();
+    std::string site_url = cpp_ssg_config_data["site"]["url"].get<std::string>();
 
     for (size_t index = 0; index < collections_count; index++)
     {
@@ -112,20 +121,57 @@ void render_collections()
             std::string file_name = full_output_path.substr(13 + collections[index].get<std::string>().length(), full_output_path.length());
             full_output_path = full_output_path + ".html";
 
+            std::string rel_path = full_output_path.substr(12, full_output_path.length());
+            std::string rel_url = base_url + "/" + rel_path;
+            cpp_ssg_config_data["page_url"] = site_url + rel_url;
+
             cpp_ssg_config_data["content"] = parse_md(read_file(full_input_path));
 
             std::string temp_layout = read_file("layouts/" + collections[index].get<std::string>() + ".html");
 
             std::string temp_full_file = render(temp_layout, cpp_ssg_config_data);
-            save_html_file(temp_full_file, "site/" + full_output_path.substr(12, temp_full_file.length()));
+            save_html_file(temp_full_file, "site/" + rel_path);
 
             // making a list for storing links for items inside each collection
-            int len = full_output_path.length();
-            std::string base_url = cpp_ssg_config_data["site"]["base_url"].get<std::string>();
-            cpp_ssg_config_data["collection_items_list"][collections[index].get<std::string>()][i] = {{"title", file_name}, {"url", base_url + "/" + full_output_path.substr(12, len)}};
+            cpp_ssg_config_data["collection_items_list"][collections[index].get<std::string>()][i] = {{"title", file_name}, {"url", rel_url}};
             cpp_ssg_config_data["content"] = "";
         }
     }
+}
+
+void generate_robots_txt()
+{
+    std::string site_url = cpp_ssg_config_data["site"]["url"].get<std::string>();
+    std::ofstream out("site/robots.txt");
+    out << "User-agent: *\n";
+    out << "Allow: /\n\n";
+    out << "Sitemap: " << site_url << "/sitemap.xml\n";
+    out.close();
+    std::cout << "FILE GENERATED: site/robots.txt" << std::endl;
+}
+
+void generate_sitemap()
+{
+    std::string site_url = cpp_ssg_config_data["site"]["url"].get<std::string>();
+    std::ofstream out("site/sitemap.xml");
+    out << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+    out << "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n";
+
+    for (auto& page : cpp_ssg_config_data["page_list"])
+    {
+        out << "  <url><loc>" << site_url << page["url"].get<std::string>() << "</loc></url>\n";
+    }
+    for (auto& collection_name : cpp_ssg_config_data["collections"])
+    {
+        for (auto& item : cpp_ssg_config_data["collection_items_list"][collection_name.get<std::string>()])
+        {
+            out << "  <url><loc>" << site_url << item["url"].get<std::string>() << "</loc></url>\n";
+        }
+    }
+
+    out << "</urlset>\n";
+    out.close();
+    std::cout << "FILE GENERATED: site/sitemap.xml" << std::endl;
 }
 
 int main()
@@ -134,6 +180,8 @@ int main()
     std::filesystem::create_directory("site");
     render_collections();
     render_pages();
+    generate_sitemap();
+    generate_robots_txt();
     // copy static contents to site directory
     try
     {

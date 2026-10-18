@@ -2,6 +2,7 @@
     "site": {
         "title": "蕭善彧 ShanYu Hsiao",
         "description": "蕭善彧的個人部落格，分享技術文章與生活點滴",
+        "url": "https://hsyisshy.com",
         "base_url": ""
     },
     "collections": [

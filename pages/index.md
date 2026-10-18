@@ -4,9 +4,9 @@
 
 現年 22 歲，不誤正業的大學生。過去曾在中央大學、故宮博物院擔任網管工讀生，也在資策會兼職當資料分析助理，2025 年在新創公司完成第一份軟體工程實習，結束後和朋友一起創業，開了 [SparkAct](https://sparkact.co/)。
 
-興趣是騎檔車、跑咖旅遊、健身、看動漫。這個部落格是用 C++ 寫的靜態網站產生器 sudo_site 建的。
+興趣是騎檔車、跑咖旅遊、健身、看動漫。這個部落格是用 Sharad Raj（[sharadcodes](https://github.com/sharadcodes)）開發的 C++ 靜態網站產生器 sudo_site 架設的，我只是拿來用並修了幾個在新版編譯器上的相容性問題。
 
-程式碼在 [GitHub](https://github.com/sharadcodes/sudo_site) 上開源，如果對這個小工具感興趣，歡迎參考看看。
+專案在 [GitHub](https://github.com/sharadcodes/sudo_site) 上開源，如果喜歡這個小工具，歡迎去原作者的 repo 給個星星支持他。
 
 如有任何問題，歡迎透過 [CONTACT](/contact.html) 頁面上的方式聯繫我。
 

@@ -4,5 +4,30 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
   <meta name="description" content="{{ site.description }}" />
   <title>{{ site.title }}</title>
+  <link rel="canonical" href="{{ page_url }}" />
   <link rel="stylesheet" href="{{site.base_url}}/static/css/style.css">
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="{{ site.title }}" />
+  <meta property="og:description" content="{{ site.description }}" />
+  <meta property="og:url" content="{{ page_url }}" />
+  <meta property="og:locale" content="zh_TW" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="{{ site.title }}" />
+  <meta name="twitter:description" content="{{ site.description }}" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "蕭善彧",
+    "alternateName": "ShanYu Hsiao",
+    "url": "{{ site.url }}",
+    "sameAs": [
+      "https://github.com/hsyisshy",
+      "https://www.linkedin.com/in/hsyisshy/"
+    ]
+  }
+  </script>
 </head>
