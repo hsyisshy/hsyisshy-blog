@@ -23,6 +23,8 @@ jobs:
         run: g++ -std=c++17 -o sudo_site sudo_site.cpp
       - name: Build site
         run: ./sudo_site
+      - name: Add custom domain
+        run: cp CNAME site/CNAME
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

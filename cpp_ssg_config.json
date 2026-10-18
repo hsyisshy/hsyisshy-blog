@@ -1,7 +1,7 @@
 {
     "site": {
         "title": "SUDO SSG Demo",
-        "base_url": "/hsyisshy-blog"
+        "base_url": ""
     },
     "collections": [
         "blog",
