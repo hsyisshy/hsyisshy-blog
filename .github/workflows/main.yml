@@ -1,29 +1,40 @@
-name: CI
+name: Build and deploy to GitHub Pages
 
-on: [push]
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
 
 jobs:
   build:
-
-    runs-on: ubuntu-18.04
-
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: Compile
-      run: g++ -o sudo_site sudo_site.cpp -lstdc++fs
-    - name: build
-      run: ./sudo_site
-    - name: Push changes to the sudo_site_demo repository
-      run: |
-       ls
-       git clone https://${{ secrets.MYTOKEN }}@github.com/sharadcodes/sudo_site_demo.git
-       cp -a site/. sudo_site_demo
-       cd sudo_site_demo
-       ls
-       git config user.email "${{ github.actor }}@users.noreply.github.com"
-       git config user.name "${{ github.actor }}"        
-       git add .
-       git commit -am "Site updated"
-       git push -f -q https://${{ secrets.MYTOKEN }}@github.com/sharadcodes/sudo_site_demo.git master
-       echo Finished
-      
+      - uses: actions/checkout@v4
+      - name: Compile
+        run: g++ -std=c++17 -o sudo_site sudo_site.cpp
+      - name: Build site
+        run: ./sudo_site
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

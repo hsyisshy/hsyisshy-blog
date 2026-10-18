@@ -24,7 +24,7 @@
 #include "libs/inja.hpp"
 #include "libs/maddy/parser.h"
 #include <glob.h>
-#include <experimental/filesystem>
+#include <filesystem>
 #include <fstream>
 #include <memory>
 #include <string>
@@ -98,7 +98,7 @@ void render_collections()
 
     for (size_t index = 0; index < collections_count; index++)
     {
-        std::experimental::filesystem::create_directory("site/" + collections[index].get<std::string>());
+        std::filesystem::create_directory("site/" + collections[index].get<std::string>());
         std::string temp_path = "collections/" + collections[index].get<std::string>() + "/*";
         glob(temp_path.c_str(), GLOB_TILDE, NULL, &glob_result);
         for (unsigned int i = 0; i < glob_result.gl_pathc; ++i)
@@ -130,15 +130,15 @@ void render_collections()
 int main()
 {
     std::string html = read_file("layouts/pages.html");
-    std::experimental::filesystem::create_directory("site");
+    std::filesystem::create_directory("site");
     render_collections();
     render_pages();
     // copy static contents to site directory
     try
     {
-        std::experimental::filesystem::remove_all("./site/static");
-        std::experimental::filesystem::create_directory("./site/static");
-        std::experimental::filesystem::copy("./static/", "./site/static", std::experimental::filesystem::copy_options::recursive);
+        std::filesystem::remove_all("./site/static");
+        std::filesystem::create_directory("./site/static");
+        std::filesystem::copy("./static/", "./site/static", std::filesystem::copy_options::recursive);
     }
     catch (std::exception ex)
     {
